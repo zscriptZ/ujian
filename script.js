@@ -2,11 +2,13 @@ let examData = {
     questions: [
         { question: "Apa ibu kota Indonesia?", options: ["Jakarta", "Bandung", "Surabaya"], answer: 0 },
         { question: "Berapa 2 + 2?", options: ["3", "4", "5"], answer: 1 },
+        { question: "Siapa Presiden Indonesia?", options: ["Joko Widodo", "Megawati", "Prabowo"], answer: 0 },
         // Tambah lebih banyak soal sesuai kebutuhan
     ],
     correctAnswers: 0,
     wrongAnswers: 0,
     timer: 300, // 5 menit (300 detik)
+    isExamFinished: false
 };
 
 let timerInterval;
@@ -42,7 +44,7 @@ function startExamPage() {
 }
 
 function loadQuestions() {
-    const questionsContainer = document.getElementById("questions");
+    const examForm = document.getElementById("exam-form");
     examData.questions.forEach((q, index) => {
         let questionHTML = `
             <div class="mb-3">
@@ -53,7 +55,7 @@ function loadQuestions() {
                 `).join('')}
             </div>
         `;
-        questionsContainer.innerHTML += questionHTML;
+        examForm.innerHTML += questionHTML;
     });
 }
 
@@ -72,6 +74,9 @@ function startTimer() {
 }
 
 function finishExam() {
+    if (examData.isExamFinished) return;
+
+    examData.isExamFinished = true;
     clearInterval(timerInterval);
 
     // Hitung jawaban benar dan salah
@@ -91,5 +96,23 @@ function finishExam() {
     // Kirim data ke Discord
     sendToDiscord(name, className, participantId, examData.correctAnswers, examData.wrongAnswers, examData.correctAnswers * 10, examData.timer, new Date().toISOString());
 
-    alert("Ujian selesai. Terima kasih!");
+    showResult();
 }
+
+function showResult() {
+    const resultText = `
+        <strong>Nama:</strong> ${localStorage.getItem("name")}<br>
+        <strong>Kelas:</strong> ${localStorage.getItem("class")}<br>
+        <strong>Nomor Peserta:</strong> ${localStorage.getItem("participantId")}<br>
+        <strong>Benar:</strong> ${examData.correctAnswers}<br>
+        <strong>Salah:</strong> ${examData.wrongAnswers}<br>
+        <strong>Nilai:</strong> ${examData.correctAnswers * 10}<br>
+    `;
+    document.getElementById("result-text").innerHTML = resultText;
+    document.getElementById("exam-container").style.display = "none";
+    document.getElementById("result-container").style.display = "block";
+}
+
+function reloadPage() {
+    window.location.reload();
+    }
