@@ -8,12 +8,6 @@ let examData = {
             answer: 1 // Indeks jawaban yang benar (dimulai dari 0)
         },
         {
-            type: "image-input",
-            question: "Gambar 2: Isikan jawaban",
-            image: "https://via.placeholder.com/150",
-            answer: "A" // Jawaban benar berupa teks
-        },
-        {
             type: "text-input",
             question: "Apa warna langit?",
             answer: "Biru" // Jawaban benar berupa teks
@@ -73,14 +67,6 @@ function loadQuestions() {
                     `).join('')}
                 </div>
             `;
-        } else if (q.type === "image-input") {
-            questionHTML = `
-                <div class="mb-3">
-                    <label>${q.question}</label><br>
-                    <img src="${q.image}" alt="Soal Gambar" class="img-fluid mb-3">
-                    <input type="text" name="question${index}" class="form-control" placeholder="Jawab di sini">
-                </div>
-            `;
         } else if (q.type === "text-input") {
             questionHTML = `
                 <div class="mb-3">
@@ -121,21 +107,17 @@ function finishExam() {
     // Hitung jawaban benar dan salah
     examData.questions.forEach((q, index) => {
         const selected = document.querySelector(`input[name="question${index}"]:checked`);
-        if (selected && parseInt(selected.value) === q.answer) {
-            examData.correctAnswers++;
-        } else {
-            examData.wrongAnswers++;
-        }
-
-        // Jika soal isian, periksa jawabannya
-        if (q.type === "image-input" || q.type === "text-input") {
-            const input = document.querySelector(`input[name="question${index}"]`);
-            if (input && input.value.trim().toLowerCase() === q.answer.toLowerCase()) {
+        if (q.type === "image-choice" && selected) {
+            // Soal pilihan ganda
+            if (parseInt(selected.value) === q.answer) {
                 examData.correctAnswers++;
             } else {
                 examData.wrongAnswers++;
             }
         }
+
+        // Jika soal isian, tidak dihitung benar atau salah
+        // Tidak ada perhitungan untuk soal isian di sini
     });
 
     // Hitung nilai
@@ -175,4 +157,4 @@ function showToast(message, type = "success") {
 
 function reloadPage() {
     location.reload();
-}
+            }
