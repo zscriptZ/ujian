@@ -19,7 +19,7 @@ function startExam() {
         document.getElementById("login-key-form").style.display = "none";
         document.getElementById("biodata-form").style.display = "block";
     } else {
-        alert("Key Ujian Salah!");
+        showToast("Key Ujian Salah!", "danger");
     }
 }
 
@@ -56,6 +56,11 @@ function loadQuestions() {
             </div>
         `;
         examForm.innerHTML += questionHTML;
+
+        // Menambahkan garis pemisah setelah setiap soal (kecuali soal terakhir)
+        if (index < examData.questions.length - 1) {
+            examForm.innerHTML += '<hr class="my-4">';
+        }
     });
 }
 
@@ -89,30 +94,49 @@ function finishExam() {
         }
     });
 
+    // Hitung nilai (score)
+    let score = (examData.correctAnswers / examData.questions.length) * 100;
+
+    // Simpan nilai di dalam data
+    examData.score = score;
+
     const name = localStorage.getItem("name");
     const className = localStorage.getItem("class");
     const participantId = localStorage.getItem("participantId");
 
     // Kirim data ke Discord
-    sendToDiscord(name, className, participantId, examData.correctAnswers, examData.wrongAnswers, examData.correctAnswers * 10, examData.timer, new Date().toISOString());
+    sendToDiscord(name, className, participantId, examData.correctAnswers, examData.wrongAnswers, score, examData.timer, new Date().toISOString());
 
-    showResult();
+    showResult(score);
+    showToast(`Ujian selesai! Skor Anda: ${score.toFixed(2)}`, "success");
 }
 
-function showResult() {
+function showResult(score) {
     const resultText = `
         <strong>Nama:</strong> ${localStorage.getItem("name")}<br>
         <strong>Kelas:</strong> ${localStorage.getItem("class")}<br>
         <strong>Nomor Peserta:</strong> ${localStorage.getItem("participantId")}<br>
         <strong>Benar:</strong> ${examData.correctAnswers}<br>
         <strong>Salah:</strong> ${examData.wrongAnswers}<br>
-        <strong>Nilai:</strong> ${examData.correctAnswers * 10}<br>
+        <strong>Nilai:</strong> ${score.toFixed(2)}<br> <!-- Tampilkan nilai dengan 2 desimal -->
     `;
     document.getElementById("result-text").innerHTML = resultText;
     document.getElementById("exam-container").style.display = "none";
     document.getElementById("result-container").style.display = "block";
 }
 
+function showToast(message, type = "success") {
+    const toastElement = document.getElementById('exam-toast');
+    const toastBody = toastElement.querySelector('.toast-body');
+    toastBody.textContent = message;
+
+    const toast = new bootstrap.Toast(toastElement);
+    toastElement.classList.remove("bg-success", "bg-danger");
+    toastElement.classList.add(type === "success" ? "bg-success" : "bg-danger");
+    
+    toast.show();
+}
+
 function reloadPage() {
     window.location.reload();
-    }
+}

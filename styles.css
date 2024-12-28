@@ -1,21 +1,25 @@
+/* Styles for the exam */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
 }
 
-#timer {
-    font-size: 1.5rem;
+.container {
+    max-width: 800px;
+    margin-top: 50px;
+}
+
+/* Custom styles for the exam form */
+#exam-form .mb-3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+#exam-form label {
     font-weight: bold;
-    color: red;
 }
 
-h3 {
+hr {
+    border: 1px solid #ddd;
     margin-top: 20px;
-}
-
-#exam-container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }

@@ -10,6 +10,7 @@
 <body>
 
 <div class="container mt-5">
+    <!-- Form Login Key -->
     <div id="login-key-form" class="mb-4 text-center">
         <h2>Ujian Sekolah</h2>
         <label for="login-key">Masukkan Key Ujian:</label>
@@ -45,10 +46,23 @@
         <p id="result-text"></p>
         <button class="btn btn-secondary" onclick="reloadPage()">Muat Ulang</button>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3">
+        <div id="exam-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+            <div class="toast-header">
+                <strong class="me-auto">Ujian Selesai</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Hasil ujian telah dihitung. Cek nilai di bawah.
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="script.js"></script>
 <script src="webhook.js"></script>
 </body>
-        </html>
+</html>
