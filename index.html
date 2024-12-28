@@ -10,17 +10,15 @@
 <body>
 
 <div class="container mt-5">
-    <h2 class="text-center">Ujian Sekolah</h2>
-
-    <!-- Form Login Key -->
-    <div id="login-key-form" class="mb-4">
+    <div id="login-key-form" class="mb-4 text-center">
+        <h2>Ujian Sekolah</h2>
         <label for="login-key">Masukkan Key Ujian:</label>
-        <input type="text" id="login-key" class="form-control mb-3" placeholder="Key Ujian">
+        <input type="text" id="login-key" class="form-control mb-3" placeholder="Key Ujian" required>
         <button class="btn btn-primary" onclick="startExam()">Mulai Ujian</button>
     </div>
 
     <!-- Form Biodata -->
-    <div id="biodata-form" class="mb-4" style="display: none;">
+    <div id="biodata-form" class="mb-4 text-center" style="display: none;">
         <h3>Input Biodata</h3>
         <form id="biodata">
             <label for="name">Nama:</label>
@@ -34,15 +32,18 @@
     </div>
 
     <!-- Ujian -->
-    <div id="exam-container" style="display: none;">
-        <div class="mb-3">
-            <span id="timer">Waktu Tersisa: 00:00</span>
-        </div>
-        <form id="exam-form">
-            <h3>Pertanyaan Ujian</h3>
-            <div id="questions"></div>
-            <button type="button" class="btn btn-primary mt-3" onclick="finishExam()">Selesai</button>
-        </form>
+    <div id="exam-container" class="text-center" style="display: none;">
+        <h3>Waktu Ujian</h3>
+        <span id="timer" class="d-block mb-4" style="font-size: 1.5rem; font-weight: bold; color: red;">Waktu Tersisa: 05:00</span>
+        <form id="exam-form"></form>
+        <button type="button" class="btn btn-primary mt-3" onclick="finishExam()">Selesai</button>
+    </div>
+
+    <!-- Hasil Ujian -->
+    <div id="result-container" class="text-center" style="display: none;">
+        <h3>Hasil Ujian</h3>
+        <p id="result-text"></p>
+        <button class="btn btn-secondary" onclick="reloadPage()">Muat Ulang</button>
     </div>
 </div>
 
@@ -50,4 +51,4 @@
 <script src="script.js"></script>
 <script src="webhook.js"></script>
 </body>
-</html>
+        </html>
