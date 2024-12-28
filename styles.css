@@ -1,5 +1,6 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
 }
 
 #timer {
@@ -10,4 +11,11 @@ body {
 
 h3 {
     margin-top: 20px;
+}
+
+#exam-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
