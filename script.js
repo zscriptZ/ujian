@@ -1,5 +1,24 @@
 let examData = {
-    questions: [],
+    questions: [
+        {
+            type: "image-choice",
+            question: "Gambar 1: Pilih jawaban yang benar",
+            image: "https://via.placeholder.com/150",
+            options: ["Jawaban A", "Jawaban B", "Jawaban C"],
+            answer: 1 // Indeks jawaban yang benar (dimulai dari 0)
+        },
+        {
+            type: "image-input",
+            question: "Gambar 2: Isikan jawaban",
+            image: "https://via.placeholder.com/150",
+            answer: "A" // Jawaban benar berupa teks
+        },
+        {
+            type: "text-input",
+            question: "Apa warna langit?",
+            answer: "Biru" // Jawaban benar berupa teks
+        }
+    ],
     correctAnswers: 0,
     wrongAnswers: 0,
     timer: 300, // 5 menit (300 detik)
@@ -28,79 +47,8 @@ document.getElementById("biodata").addEventListener("submit", function (e) {
     localStorage.setItem("class", className);
     localStorage.setItem("participantId", participantId);
 
-    fetchQuestionsFromPastebin();
+    startExamPage(); // Langsung melanjutkan ke halaman ujian
 });
-
-async function fetchQuestionsFromPastebin() {
-    try {
-        const pastebinURL = "https://pastebin.com/raw/cb5xZtAs"; // Ganti dengan URL Pastebin
-        const response = await fetch(pastebinURL);
-        const data = await response.text(); // Mendapatkan data sebagai teks biasa
-
-        const questions = parseQuestions(data);
-        examData.questions = questions;
-
-        // Ambil judul mata pelajaran dari data yang diambil
-        const subjectTitle = questions[0].subject || "Mata Pelajaran Tidak Ditemukan";
-        document.getElementById("subject-title").textContent = subjectTitle;
-
-        startExamPage();
-    } catch (error) {
-        console.error("Error fetching data from Pastebin:", error);
-        showToast("Gagal memuat soal. Coba lagi.", "danger");
-    }
-}
-
-function parseQuestions(data) {
-    const lines = data.split("\n");
-    const questions = [];
-    let currentQuestion = null;
-
-    lines.forEach(line => {
-        line = line.trim();
-
-        // Menangkap judul mata pelajaran di baris pertama
-        if (line.match(/^Mata Pelajaran:/)) {
-            questions.push({ subject: line.replace(/^Mata Pelajaran:\s*/, "") });
-        }
-
-        // Soal Gambar dengan Pilihan Jawaban
-        if (line.match(/^Gambar:/) && line.includes("Pilihan:")) {
-            if (currentQuestion) {
-                questions.push(currentQuestion);
-            }
-            currentQuestion = { type: "image-choice", options: [], image: null, answer: null };
-            currentQuestion.question = line.replace(/^Gambar:\s*/, "").replace(/Pilihan:.*/, "");
-        }
-
-        // Soal Gambar dengan Jawaban Isian
-        if (line.match(/^Gambar:/) && line.includes("Jawaban:")) {
-            if (currentQuestion) {
-                questions.push(currentQuestion);
-            }
-            currentQuestion = { type: "image-input", image: null, answer: null };
-            currentQuestion.question = line.replace(/^Gambar:\s*/, "").replace(/Jawaban:.*/, "");
-            currentQuestion.image = line.split("Jawaban:")[1].trim();
-        }
-
-        // Soal Tertulis dengan Jawaban Isian
-        if (line.match(/^Jawaban:/)) {
-            currentQuestion.answer = line.replace(/^Jawaban:\s*/, "").trim();
-        }
-
-        // Mendapatkan Pilihan Jawaban untuk soal Gambar Pilihan
-        if (line.match(/^[A-C]\./)) {
-            const option = line.replace(/^[A-C]\.\s*/, "");
-            currentQuestion.options.push(option);
-        }
-    });
-
-    if (currentQuestion) {
-        questions.push(currentQuestion);
-    }
-
-    return questions;
-}
 
 function startExamPage() {
     document.getElementById("biodata-form").style.display = "none";
