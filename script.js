@@ -1,9 +1,39 @@
+// Fungsi untuk mengacak urutan soal menggunakan algoritma Fisher-Yates
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // Tukar elemen
+    }
+}
+
 let examData = {
     questions: [
-        { question: "Apa ibu kota Indonesia?", options: ["Jakarta", "Bandung", "Surabaya"], answer: 0 },
-        { question: "Berapa 2 + 2?", options: ["3", "4", "5"], answer: 1 },
-        { question: "Siapa Presiden Indonesia?", options: ["Joko Widodo", "Megawati", "Prabowo"], answer: 0 },
-        // Tambah lebih banyak soal sesuai kebutuhan
+        { 
+            question: "Apa ibu kota Indonesia?", 
+            options: ["Jakarta", "Bandung", "Surabaya"], 
+            answer: 0 
+        },
+        { 
+            question: "Berapa 2 + 2?", 
+            options: ["3", "4", "5"], 
+            answer: 1 
+        },
+        { 
+            question: "Siapa Presiden Indonesia?", 
+            options: ["Joko Widodo", "Megawati", "Prabowo"], 
+            answer: 0 
+        },
+        { 
+            question: "Gambar ini menunjukkan apa?", 
+            image: "https://via.placeholder.com/300", // Gambar soal
+            options: ["Gunung", "Pantai", "Kota"], 
+            answer: 0 
+        },
+        { 
+            question: "Tuliskan nama ibu kota Indonesia", // Soal isian
+            answer: "Jakarta", // Jawaban untuk soal isian
+            type: "text" // Menandakan soal ini adalah soal isian
+        },
     ],
     correctAnswers: 0,
     wrongAnswers: 0,
@@ -11,50 +41,53 @@ let examData = {
     isExamFinished: false
 };
 
-let timerInterval;
-
-function startExam() {
-    const key = document.getElementById("login-key").value;
-    if (key === "12345") { // Cek Key Ujian
-        document.getElementById("login-key-form").style.display = "none";
-        document.getElementById("biodata-form").style.display = "block";
-    } else {
-        showToast("Key Ujian Salah!", "danger");
-    }
-}
-
-document.getElementById("biodata").addEventListener("submit", function (e) {
-    e.preventDefault();
-    const name = document.getElementById("name").value;
-    const className = document.getElementById("class").value;
-    const participantId = document.getElementById("participant-id").value;
-
-    localStorage.setItem("name", name);
-    localStorage.setItem("class", className);
-    localStorage.setItem("participantId", participantId);
-
-    startExamPage();
-});
-
-function startExamPage() {
-    document.getElementById("biodata-form").style.display = "none";
-    document.getElementById("exam-container").style.display = "block";
-    loadQuestions();
-    startTimer();
-}
-
+// Fungsi untuk memuat soal ke dalam halaman
 function loadQuestions() {
+    shuffle(examData.questions); // Acak urutan soal
+
     const examForm = document.getElementById("exam-form");
+    const questionNav = document.getElementById("question-navigation");
+
     examData.questions.forEach((q, index) => {
+        // Tambahkan nomor soal di sidebar
+        const questionNavItem = document.createElement("div");
+        questionNavItem.classList.add("question-box");
+        questionNavItem.textContent = index + 1;
+        questionNavItem.id = `question-nav-${index}`;
+        questionNavItem.onclick = () => {
+            document.getElementById(`question${index}`).scrollIntoView({ behavior: 'smooth' });
+        };
+        questionNav.appendChild(questionNavItem);
+
+        // Tambahkan soal ke dalam form ujian
         let questionHTML = `
-            <div class="mb-3">
+            <div class="mb-3" id="question${index}">
                 <label>${q.question}</label><br>
+        `;
+        
+        // Menambahkan gambar jika soal memiliki properti "image"
+        if (q.image) {
+            questionHTML += `<img src="${q.image}" alt="Image for question ${index}" class="img-fluid mb-3">`;
+        }
+        
+        // Menambahkan pilihan jawaban untuk soal pilihan ganda
+        if (q.options) {
+            questionHTML += `
                 ${q.options.map((option, i) => `
-                    <input type="radio" name="question${index}" value="${i}" id="q${index}a${i}">
+                    <input type="radio" name="question${index}" value="${i}" id="q${index}a${i}" onclick="markQuestionAsAnswered(${index})">
                     <label for="q${index}a${i}">${option}</label><br>
                 `).join('')}
-            </div>
-        `;
+            `;
+        }
+
+        // Menambahkan input untuk soal isian
+        if (q.type === "text") {
+            questionHTML += `
+                <input type="text" name="question${index}" id="q${index}-input" class="form-control" placeholder="Tuliskan jawaban Anda" oninput="markQuestionAsAnswered(${index})">
+            `;
+        }
+
+        questionHTML += `</div>`;
         examForm.innerHTML += questionHTML;
 
         // Menambahkan garis pemisah setelah setiap soal (kecuali soal terakhir)
@@ -62,81 +95,88 @@ function loadQuestions() {
             examForm.innerHTML += '<hr class="my-4">';
         }
     });
+
+    startTimer();
 }
 
+// Menandai soal yang sudah dijawab
+function markQuestionAsAnswered(index) {
+    const questionNavItem = document.getElementById(`question-nav-${index}`);
+    questionNavItem.classList.add("completed"); // Menandakan soal sudah dijawab
+}
+
+// Timer untuk ujian
 function startTimer() {
-    timerInterval = setInterval(function () {
-        examData.timer--;
-        let minutes = Math.floor(examData.timer / 60);
-        let seconds = examData.timer % 60;
-        document.getElementById("timer").textContent = `Waktu Tersisa: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-        
-        if (examData.timer <= 0) {
+    const timerElement = document.getElementById("timer");
+    let secondsRemaining = examData.timer;
+
+    const timerInterval = setInterval(() => {
+        const minutes = Math.floor(secondsRemaining / 60);
+        const seconds = secondsRemaining % 60;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (secondsRemaining <= 0) {
             clearInterval(timerInterval);
             finishExam();
         }
+        secondsRemaining--;
     }, 1000);
 }
 
+// Menyelesaikan ujian dan menghitung nilai
 function finishExam() {
     if (examData.isExamFinished) return;
 
     examData.isExamFinished = true;
     clearInterval(timerInterval);
 
-    // Hitung jawaban benar dan salah
     examData.questions.forEach((q, index) => {
-        const selected = document.querySelector(`input[name="question${index}"]:checked`);
-        if (selected && parseInt(selected.value) === q.answer) {
-            examData.correctAnswers++;
-        } else {
-            examData.wrongAnswers++;
+        // Cek soal pilihan ganda
+        if (q.options) {
+            const selected = document.querySelector(`input[name="question${index}"]:checked`);
+            if (selected && parseInt(selected.value) === q.answer) {
+                examData.correctAnswers++;
+            } else if (selected) {
+                examData.wrongAnswers++;
+            }
         }
+
+        // Soal isian tidak dihitung dalam penilaian
     });
 
     // Hitung nilai (score)
-    let score = (examData.correctAnswers / examData.questions.length) * 100;
-
-    // Simpan nilai di dalam data
+    let score = (examData.correctAnswers / examData.questions.filter(q => q.options).length) * 100;
     examData.score = score;
-
-    const name = localStorage.getItem("name");
-    const className = localStorage.getItem("class");
-    const participantId = localStorage.getItem("participantId");
-
-    // Kirim data ke Discord
-    sendToDiscord(name, className, participantId, examData.correctAnswers, examData.wrongAnswers, score, examData.timer, new Date().toISOString());
 
     showResult(score);
     showToast(`Ujian selesai! Skor Anda: ${score.toFixed(2)}`, "success");
+
+    // Kirim hasil ke webhook
+    sendToDiscord();
 }
 
+// Menampilkan hasil ujian
 function showResult(score) {
-    const resultText = `
-        <strong>Nama:</strong> ${localStorage.getItem("name")}<br>
-        <strong>Kelas:</strong> ${localStorage.getItem("class")}<br>
-        <strong>Nomor Peserta:</strong> ${localStorage.getItem("participantId")}<br>
-        <strong>Benar:</strong> ${examData.correctAnswers}<br>
-        <strong>Salah:</strong> ${examData.wrongAnswers}<br>
-        <strong>Nilai:</strong> ${score.toFixed(2)}<br> <!-- Tampilkan nilai dengan 2 desimal -->
+    const result = `
+        <h3>Hasil Ujian</h3>
+        <p>Jawaban Benar: ${examData.correctAnswers}</p>
+        <p>Jawaban Salah: ${examData.wrongAnswers}</p>
+        <p>Skor: ${score.toFixed(2)}</p>
     `;
-    document.getElementById("result-text").innerHTML = resultText;
-    document.getElementById("exam-container").style.display = "none";
-    document.getElementById("result-container").style.display = "block";
+    document.getElementById("exam-form").innerHTML = result;
 }
 
+// Menampilkan Toast Notification
 function showToast(message, type = "success") {
-    const toastElement = document.getElementById('exam-toast');
-    const toastBody = toastElement.querySelector('.toast-body');
+    const toastBody = document.getElementById("toast-body");
     toastBody.textContent = message;
 
-    const toast = new bootstrap.Toast(toastElement);
-    toastElement.classList.remove("bg-success", "bg-danger");
-    toastElement.classList.add(type === "success" ? "bg-success" : "bg-danger");
+    const toastElement = document.getElementById("toast");
+    toastElement.classList.remove("hide");
+    toastElement.classList.add("show");
     
-    toast.show();
-}
-
-function reloadPage() {
-    window.location.reload();
+    setTimeout(() => {
+        toastElement.classList.remove("show");
+        toastElement.classList.add("hide");
+    }, 3000);
 }

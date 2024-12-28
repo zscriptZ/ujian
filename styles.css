@@ -1,25 +1,49 @@
-/* Styles for the exam */
-body {
-    font-family: Arial, sans-serif;
+/* Styling untuk kotak nomor soal */
+#question-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.container {
-    max-width: 800px;
-    margin-top: 50px;
-}
-
-/* Custom styles for the exam form */
-#exam-form .mb-3 {
-    border-bottom: 2px solid #eee;
-    padding-bottom: 15px;
-}
-
-#exam-form label {
+.question-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #fff;
     font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
-hr {
-    border: 1px solid #ddd;
-    margin-top: 20px;
-    margin-bottom: 20px;
+.question-box.completed {
+    background-color: #28a745; /* Hijau */
+    color: white;
+}
+
+.question-box.active {
+    background-color: #007bff; /* Biru */
+    color: white;
+}
+
+.question-box:hover {
+    background-color: #f8f9fa;
+}
+
+/* Styling untuk Toast Notification */
+.toast {
+    width: 300px;
+    background-color: #28a745;
+    color: white;
+}
+
+.toast-body {
+    font-size: 14px;
+}
+
+.toast-container {
+    z-index: 9999;
 }
