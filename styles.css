@@ -1,49 +1,89 @@
-/* Styling untuk kotak nomor soal */
-#question-navigation {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
 }
 
-.question-box {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    cursor: pointer;
-    background-color: #fff;
+.container {
+    max-width: 800px;
+    margin-top: 50px;
+}
+
+/* Header Style */
+h2, h3 {
+    color: #333;
+}
+
+h3 {
+    margin-top: 20px;
+}
+
+/* Question Styling */
+#exam-form .mb-3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+#exam-form label {
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-size: 1.1rem;
 }
 
-.question-box.completed {
-    background-color: #28a745; /* Hijau */
-    color: white;
+#exam-form input[type="radio"] {
+    margin-right: 10px;
 }
 
-.question-box.active {
-    background-color: #007bff; /* Biru */
-    color: white;
+/* Timer Styling */
+#timer {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: red;
 }
 
-.question-box:hover {
-    background-color: #f8f9fa;
+/* Separator line between questions */
+hr {
+    border: 1px solid #ddd;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-/* Styling untuk Toast Notification */
+/* Image Styling */
+.question-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+/* Input field styling for text-based answers */
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Button Styling */
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+button:disabled {
+    background-color: #ccc;
+}
+
+/* Toast Notification */
+#toast-container {
+    z-index: 1050;
+}
+
 .toast {
-    width: 300px;
-    background-color: #28a745;
-    color: white;
-}
-
-.toast-body {
-    font-size: 14px;
-}
-
-.toast-container {
-    z-index: 9999;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    min-width: 250px;
 }
