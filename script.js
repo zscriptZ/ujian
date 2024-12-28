@@ -33,7 +33,7 @@ document.getElementById("biodata").addEventListener("submit", function (e) {
 
 async function fetchQuestionsFromPastebin() {
     try {
-        const pastebinURL = "YOUR_PASTEBIN_URL"; // Ganti dengan URL Pastebin
+        const pastebinURL = "https://pastebin.com/raw/cb5xZtAs"; // Ganti dengan URL Pastebin
         const response = await fetch(pastebinURL);
         const data = await response.text(); // Mendapatkan data sebagai teks biasa
 
